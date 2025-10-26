@@ -1,0 +1,326 @@
+<!-- <!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>مرجع كامل Django ORM</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+  h1 { text-align: center; color: #333; margin-bottom: 20px; }
+  input { width: 100%; padding: 10px; margin-bottom: 15px; font-size: 16px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; }
+  th, td { border: 1px solid #ccc; padding: 10px; text-align: left; vertical-align: top; }
+  th { background: #333; color: #fff; }
+  tr:nth-child(even) { background: #f9f9f9; }
+</style>
+</head>
+<body>
+
+<h1>مرجع كامل Django ORM</h1>
+<input type="text" id="search" placeholder="ابحث عن الدالة أو الوصف أو المثال...">
+
+<table id="ormTable">
+  <thead>
+    <tr>
+      <th>الدالة</th>
+      <th>الشرح</th>
+      <th>مثال</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- CREATE 
+    <tr><td>create()</td><td>إنشاء صف جديد في قاعدة البيانات مباشرة</td><td>User.objects.create(name="Ali", age=25)</td></tr>
+    <tr><td>save()</td><td>حفظ كائن جديد أو تحديث كائن موجود</td><td>u = User(name="Omar", age=22); u.save()</td></tr>
+    <tr><td>bulk_create()</td><td>إضافة مجموعة كائنات دفعة واحدة</td><td>User.objects.bulk_create([User(name='A'), User(name='B')])</td></tr>
+    <tr><td>get_or_create()</td><td>بحث عن كائن وإن لم يوجد ينشئه</td><td>User.objects.get_or_create(name='Hamada', defaults={'age':30})</td></tr>
+    <tr><td>update_or_create()</td><td>تحديث كائن موجود أو إنشاء جديد</td><td>User.objects.update_or_create(name='Ali', defaults={'age':35})</td></tr>
+
+    <!-- READ 
+    <tr><td>all()</td><td>جلب كل الصفوف في الجدول</td><td>User.objects.all()</td></tr>
+    <tr><td>get()</td><td>جلب صف واحد يطابق شرط محدد</td><td>User.objects.get(id=1)</td></tr>
+    <tr><td>filter()</td><td>جلب الصفوف التي تحقق شرط معين</td><td>User.objects.filter(age__gt=20)</td></tr>
+    <tr><td>exclude()</td><td>جلب كل الصفوف عدا التي تحقق شرط معين</td><td>User.objects.exclude(name='Ali')</td></tr>
+    <tr><td>order_by()</td><td>ترتيب النتائج حسب حقل معين</td><td>User.objects.order_by('name')</td></tr>
+    <tr><td>reverse()</td><td>عكس ترتيب النتائج</td><td>User.objects.all().order_by('age').reverse()</td></tr>
+    <tr><td>first()</td><td>أول صف في النتائج</td><td>User.objects.first()</td></tr>
+    <tr><td>last()</td><td>آخر صف في النتائج</td><td>User.objects.last()</td></tr>
+    <tr><td>count()</td><td>عدد النتائج</td><td>User.objects.count()</td></tr>
+    <tr><td>exists()</td><td>التحقق إذا كانت النتائج موجودة</td><td>User.objects.filter(age=30).exists()</td></tr>
+    <tr><td>values()</td><td>ترجع القيم كـ dictionary بدلاً من كائنات</td><td>User.objects.values('name','age')</td></tr>
+    <tr><td>values_list()</td><td>ترجع قائمة بسيطة من القيم</td><td>User.objects.values_list('name', flat=True)</td></tr>
+    <tr><td>distinct()</td><td>إزالة القيم المكررة</td><td>User.objects.values('age').distinct()</td></tr>
+    <tr><td>only()</td><td>تحميل حقول محددة فقط (لتحسين الأداء)</td><td>User.objects.only('name')</td></tr>
+    <tr><td>defer()</td><td>تجاهل تحميل حقل معين لتقليل الحمل على الذاكرة</td><td>User.objects.defer('email')</td></tr>
+    <tr><td>in_bulk()</td><td>جلب عدة صفوف باستخدام IDs</td><td>User.objects.in_bulk([1,2,3])</td></tr>
+
+    <!-- UPDATE 
+    <tr><td>update()</td><td>تحديث مجموعة صفوف دفعة واحدة</td><td>User.objects.all().update(age=0)</td></tr>
+    <tr><td>save()</td><td>تحديث كائن واحد بعد التعديل</td><td>u = User.objects.get(id=1); u.age=40; u.save()</td></tr>
+
+    <!-- DELETE
+    <tr><td>delete()</td><td>حذف صف أو أكثر من قاعدة البيانات</td><td>User.objects.filter(age__lt=10).delete()</td></tr>
+    <tr><td>clear()</td><td>إزالة كل العلاقات ManyToMany</td><td>user.groups.clear()</td></tr>
+
+    <!-- LOOKUPS 
+    <tr><td>__exact</td><td>يساوي تمامًا</td><td>User.objects.filter(name__exact='Ali')</td></tr>
+    <tr><td>__iexact</td><td>يساوي بدون حساسية الحروف</td><td>User.objects.filter(name__iexact='ali')</td></tr>
+    <tr><td>__contains</td><td>يحتوي على النص</td><td>User.objects.filter(name__contains='am')</td></tr>
+    <tr><td>__icontains</td><td>يحتوي على النص بدون حساسية الحروف</td><td>User.objects.filter(name__icontains='am')</td></tr>
+    <tr><td>__startswith</td><td>يبدأ بـ</td><td>User.objects.filter(name__startswith='A')</td></tr>
+    <tr><td>__endswith</td><td>ينتهي بـ</td><td>User.objects.filter(name__endswith='d')</td></tr>
+    <tr><td>__gt</td><td>أكبر من</td><td>User.objects.filter(age__gt=30)</td></tr>
+    <tr><td>__gte</td><td>أكبر أو يساوي</td><td>User.objects.filter(age__gte=30)</td></tr>
+    <tr><td>__lt</td><td>أصغر من</td><td>User.objects.filter(age__lt=30)</td></tr>
+    <tr><td>__lte</td><td>أصغر أو يساوي</td><td>User.objects.filter(age__lte=30)</td></tr>
+    <tr><td>__in</td><td>ضمن قائمة قيم</td><td>User.objects.filter(id__in=[1,2,3])</td></tr>
+    <tr><td>__range</td><td>ضمن نطاق معين</td><td>User.objects.filter(age__range=(20,30))</td></tr>
+    <tr><td>__isnull</td><td>يكون NULL أو لا</td><td>User.objects.filter(email__isnull=True)</td></tr>
+    <tr><td>__regex</td><td>مطابقة تعبير منتظم</td><td>User.objects.filter(name__regex=r'^A')</td></tr>
+
+    <!-- RELATIONSHIPS 
+    <tr><td>select_related()</td><td>تحسين الأداء للعلاقات OneToOne / ForeignKey</td><td>User.objects.select_related('profile')</td></tr>
+    <tr><td>prefetch_related()</td><td>تحسين الأداء للعلاقات ManyToMany</td><td>User.objects.prefetch_related('groups')</td></tr>
+    <tr><td>add()</td><td>إضافة علاقة ManyToMany</td><td>user.groups.add(group1)</td></tr>
+    <tr><td>remove()</td><td>إزالة علاقة ManyToMany</td><td>user.groups.remove(group1)</td></tr>
+
+    <!-- AGGREGATION 
+    <tr><td>aggregate()</td><td>إجراء دوال تجميعية (Sum, Avg, Count, Max, Min)</td><td>User.objects.aggregate(Avg('age'))</td></tr>
+    <tr><td>annotate()</td><td>إضافة قيم محسوبة لكل صف</td><td>User.objects.annotate(name_length=Length('name'))</td></tr>
+    <tr><td>Sum()</td><td>مجموع القيم</td><td>User.objects.aggregate(Sum('age'))</td></tr>
+    <tr><td>Avg()</td><td>المتوسط</td><td>User.objects.aggregate(Avg('age'))</td></tr>
+    <tr><td>Max()</td><td>أكبر قيمة</td><td>User.objects.aggregate(Max('age'))</td></tr>
+    <tr><td>Min()</td><td>أصغر قيمة</td><td>User.objects.aggregate(Min('age'))</td></tr>
+    <tr><td>Count()</td><td>عدد الصفوف</td><td>User.objects.aggregate(Count('id'))</td></tr>
+
+  </tbody>
+</table>
+
+<script>
+  const searchInput = document.getElementById("search");
+  const table = document.getElementById("ormTable");
+
+  searchInput.addEventListener("keyup", function() {
+    const filter = this.value.toLowerCase();
+    const rows = table.getElementsByTagName("tr");
+    for (let i = 1; i < rows.length; i++) {
+      const rowText = rows[i].innerText.toLowerCase();
+      rows[i].style.display = rowText.includes(filter) ? "" : "none";
+    }
+  });
+</script>
+
+</body>
+</html>  -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>مرجع نهائي Django ORM كامل</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap');
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    margin: 0;
+    padding: 30px;
+    direction: rtl;
+  }
+
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 25px;
+    font-size: 2.2em;
+  }
+
+  .container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: 0.3s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 8px rgba(33,150,243,0.4);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  th {
+    background: #2196f3;
+    color: #fff;
+    text-align: center;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+    font-size: 15px;
+  }
+
+  tr:hover {
+    background: #f1faff;
+    transition: 0.3s;
+  }
+
+  /* Color categories */
+  .create { background: #e8f5e9; }
+  .read { background: #e3f2fd; }
+  .update { background: #fff8e1; }
+  .delete { background: #ffebee; }
+  .lookup { background: #f3e5f5; }
+  .relation { background: #fff3e0; }
+  .aggregate { background: #ede7f6; }
+  .utility { background: #eceff1; }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .badge.create { background: #43a047; }
+  .badge.read { background: #1e88e5; }
+  .badge.update { background: #fbc02d; }
+  .badge.delete { background: #e53935; }
+  .badge.lookup { background: #8e24aa; }
+  .badge.relation { background: #fb8c00; }
+  .badge.aggregate { background: #5e35b1; }
+  .badge.utility { background: #607d8b; }
+
+</style>
+</head>
+<body>
+
+<h1>مرجع نهائي Django ORM كامل</h1>
+<input type="text" id="search" placeholder="ابحث عن الدالة أو الوصف أو المثال...">
+
+<table id="ormTable">
+<thead>
+<tr>
+<th>الدالة / الخاصية</th>
+<th>النوع</th>
+<th>الشرح</th>
+<th>مثال عملي</th>
+</tr>
+</thead>
+<tbody>
+
+<!-- CREATE -->
+<tr class="create"><td>create()</td><td>CREATE</td><td>إنشاء صف جديد مباشرة</td><td>User.objects.create(name="Ali", age=25)</td></tr>
+<tr class="create"><td>save()</td><td>CREATE/UPDATE</td><td>حفظ كائن جديد أو تحديث كائن موجود</td><td>u = User(name="Omar"); u.save()</td></tr>
+<tr class="create"><td>bulk_create()</td><td>CREATE</td><td>إضافة مجموعة كائنات دفعة واحدة</td><td>User.objects.bulk_create([User(name='A'), User(name='B')])</td></tr>
+<tr class="create"><td>get_or_create()</td><td>CREATE</td><td>بحث عن كائن أو إنشاءه إذا لم يوجد</td><td>User.objects.get_or_create(name='Hamada', defaults={'age':30})</td></tr>
+<tr class="create"><td>update_or_create()</td><td>CREATE/UPDATE</td><td>تحديث كائن موجود أو إنشاء جديد</td><td>User.objects.update_or_create(name='Ali', defaults={'age':35})</td></tr>
+
+<!-- READ -->
+<tr class="read"><td>all()</td><td>READ</td><td>جلب كل الصفوف</td><td>User.objects.all()</td></tr>
+<tr class="read"><td>get()</td><td>READ</td><td>جلب صف واحد يطابق شرط محدد</td><td>User.objects.get(id=1)</td></tr>
+<tr class="read"><td>filter()</td><td>READ</td><td>جلب الصفوف التي تحقق شرط معين</td><td>User.objects.filter(age__gt=20)</td></tr>
+<tr class="read"><td>exclude()</td><td>READ</td><td>جلب الصفوف التي لا تحقق شرط معين</td><td>User.objects.exclude(name='Ali')</td></tr>
+<tr class="read"><td>order_by()</td><td>READ</td><td>ترتيب النتائج حسب حقل</td><td>User.objects.order_by('name')</td></tr>
+<tr class="read"><td>reverse()</td><td>READ</td><td>عكس ترتيب النتائج</td><td>User.objects.all().order_by('age').reverse()</td></tr>
+<tr class="read"><td>first()</td><td>READ</td><td>أول صف في النتائج</td><td>User.objects.first()</td></tr>
+<tr class="read"><td>last()</td><td>READ</td><td>آخر صف في النتائج</td><td>User.objects.last()</td></tr>
+<tr class="read"><td>count()</td><td>READ</td><td>عدد الصفوف</td><td>User.objects.count()</td></tr>
+<tr class="read"><td>exists()</td><td>READ</td><td>التحقق من وجود النتائج</td><td>User.objects.filter(age=30).exists()</td></tr>
+<tr class="read"><td>values()</td><td>READ</td><td>إرجاع القيم كقاموس</td><td>User.objects.values('name','age')</td></tr>
+<tr class="read"><td>values_list()</td><td>READ</td><td>إرجاع قائمة من القيم</td><td>User.objects.values_list('name', flat=True)</td></tr>
+<tr class="read"><td>distinct()</td><td>READ</td><td>إزالة القيم المكررة</td><td>User.objects.values('age').distinct()</td></tr>
+<tr class="read"><td>only()</td><td>READ</td><td>تحميل حقول محددة فقط</td><td>User.objects.only('name')</td></tr>
+<tr class="read"><td>defer()</td><td>READ</td><td>تجاهل تحميل حقل معين</td><td>User.objects.defer('email')</td></tr>
+<tr class="read"><td>in_bulk()</td><td>READ</td><td>جلب عدة صفوف حسب IDs</td><td>User.objects.in_bulk([1,2,3])</td></tr>
+<tr class="utility"><td>latest()</td><td>UTILITY</td><td>أحدث صف حسب حقل تاريخ</td><td>User.objects.latest('created_at')</td></tr>
+<tr class="utility"><td>earliest()</td><td>UTILITY</td><td>أقدم صف حسب حقل تاريخ</td><td>User.objects.earliest('created_at')</td></tr>
+<tr class="utility"><td>raw()</td><td>UTILITY</td><td>تشغيل SQL خام</td><td>User.objects.raw('SELECT * FROM myapp_user')</td></tr>
+<tr class="utility"><td>select_for_update()</td><td>UTILITY</td><td>قفل الصفوف عند التحديث</td><td>User.objects.select_for_update().get(id=1)</td></tr>
+
+<!-- UPDATE -->
+<tr class="update"><td>update()</td><td>UPDATE</td><td>تحديث مجموعة صفوف دفعة واحدة</td><td>User.objects.all().update(age=0)</td></tr>
+
+<!-- DELETE -->
+<tr class="delete"><td>delete()</td><td>DELETE</td><td>حذف صفوف</td><td>User.objects.filter(age__lt=10).delete()</td></tr>
+<tr class="delete"><td>clear()</td><td>DELETE</td><td>مسح علاقات ManyToMany</td><td>user.groups.clear()</td></tr>
+
+<!-- LOOKUPS -->
+<tr class="lookup"><td>__exact</td><td>LOOKUP</td><td>يساوي تمامًا</td><td>User.objects.filter(name__exact='Ali')</td></tr>
+<tr class="lookup"><td>__iexact</td><td>LOOKUP</td><td>يساوي بدون حساسية الحروف</td><td>User.objects.filter(name__iexact='ali')</td></tr>
+<tr class="lookup"><td>__contains</td><td>LOOKUP</td><td>يحتوي على النص</td><td>User.objects.filter(name__contains='am')</td></tr>
+<tr class="lookup"><td>__icontains</td><td>LOOKUP</td><td>يحتوي على النص بدون حساسية الحروف</td><td>User.objects.filter(name__icontains='am')</td></tr>
+<tr class="lookup"><td>__startswith</td><td>LOOKUP</td><td>يبدأ بـ</td><td>User.objects.filter(name__startswith='A')</td></tr>
+<tr class="lookup"><td>__endswith</td><td>LOOKUP</td><td>ينتهي بـ</td><td>User.objects.filter(name__endswith='d')</td></tr>
+<tr class="lookup"><td>__gt</td><td>LOOKUP</td><td>أكبر من</td><td>User.objects.filter(age__gt=30)</td></tr>
+<tr class="lookup"><td>__gte</td><td>LOOKUP</td><td>أكبر أو يساوي</td><td>User.objects.filter(age__gte=30)</td></tr>
+<tr class="lookup"><td>__lt</td><td>LOOKUP</td><td>أصغر من</td><td>User.objects.filter(age__lt=30)</td></tr>
+<tr class="lookup"><td>__lte</td><td>LOOKUP</td><td>أصغر أو يساوي</td><td>User.objects.filter(age__lte=30)</td></tr>
+<tr class="lookup"><td>__in</td><td>LOOKUP</td><td>ضمن قائمة قيم</td><td>User.objects.filter(id__in=[1,2,3])</td></tr>
+<tr class="lookup"><td>__range</td><td>LOOKUP</td><td>ضمن نطاق</td><td>User.objects.filter(age__range=(20,30))</td></
+<tr class="lookup"><td>__isnull</td><td>LOOKUP</td><td>تحقق إن كانت القيمة فارغة</td><td>User.objects.filter(email__isnull=True)</td></tr>
+<tr class="lookup"><td>__regex</td><td>LOOKUP</td><td>مطابقة باستخدام التعبيرات النمطية</td><td>User.objects.filter(name__regex=r'^A.*')</td></tr>
+
+<!-- RELATIONS -->
+<tr class="relation"><td>select_related()</td><td>RELATION</td><td>جلب العلاقات ForeignKey في نفس الاستعلام (تحسين الأداء)</td><td>Book.objects.select_related('author').all()</td></tr>
+<tr class="relation"><td>prefetch_related()</td><td>RELATION</td><td>جلب علاقات ManyToMany أو ForeignKey في استعلامات منفصلة</td><td>Author.objects.prefetch_related('books').all()</td></tr>
+<tr class="relation"><td>add()</td><td>RELATION</td><td>إضافة علاقة ManyToMany</td><td>user.groups.add(group1)</td></tr>
+<tr class="relation"><td>remove()</td><td>RELATION</td><td>إزالة علاقة ManyToMany</td><td>user.groups.remove(group1)</td></tr>
+<tr class="relation"><td>set()</td><td>RELATION</td><td>تحديد كل العلاقات الجديدة دفعة واحدة</td><td>user.groups.set([group1, group2])</td></tr>
+
+<!-- AGGREGATION & ANNOTATION -->
+<tr class="aggregate"><td>aggregate()</td><td>AGGREGATION</td><td>تجميع القيم (جمع، متوسط، إلخ)</td><td>User.objects.aggregate(Sum('age'), Avg('age'))</td></tr>
+<tr class="aggregate"><td>annotate()</td><td>AGGREGATION</td><td>إضافة عمود محسوب لكل صف</td><td>Author.objects.annotate(num_books=Count('book'))</td></tr>
+<tr class="aggregate"><td>Sum()</td><td>AGGREGATION</td><td>جمع القيم</td><td>from django.db.models import Sum; User.objects.aggregate(Sum('age'))</td></tr>
+<tr class="aggregate"><td>Avg()</td><td>AGGREGATION</td><td>متوسط القيم</td><td>from django.db.models import Avg; User.objects.aggregate(Avg('age'))</td></tr>
+<tr class="aggregate"><td>Count()</td><td>AGGREGATION</td><td>عدّ الصفوف أو العناصر</td><td>from django.db.models import Count; Author.objects.annotate(num_books=Count('book'))</td></tr>
+<tr class="aggregate"><td>Max()</td><td>AGGREGATION</td><td>القيمة العظمى</td><td>from django.db.models import Max; User.objects.aggregate(Max('age'))</td></tr>
+<tr class="aggregate"><td>Min()</td><td>AGGREGATION</td><td>القيمة الصغرى</td><td>from django.db.models import Min; User.objects.aggregate(Min('age'))</td></tr>
+
+<!-- EXPRESSIONS -->
+<tr class="aggregate"><td>F()</td><td>EXPRESSION</td><td>استخدام قيمة حقل آخر في عملية</td><td>from django.db.models import F; User.objects.update(age=F('age')+1)</td></tr>
+<tr class="aggregate"><td>Q()</td><td>EXPRESSION</td><td>شروط منطقية متقدمة (AND, OR)</td><td>from django.db.models import Q; User.objects.filter(Q(age__gt=20) | Q(name__startswith='A'))</td></tr>
+<tr class="aggregate"><td>Value()</td><td>EXPRESSION</td><td>قيمة ثابتة داخل استعلام</td><td>from django.db.models import Value; User.objects.annotate(status=Value('Active'))</td></tr>
+<tr class="aggregate"><td>Func()</td><td>EXPRESSION</td><td>تشغيل دوال SQL</td><td>from django.db.models import Func; User.objects.annotate(lower_name=Func(F('name'), function='LOWER'))</td></tr>
+<tr class="aggregate"><td>ExpressionWrapper()</td><td>EXPRESSION</td><td>تغليف تعبيرات حسابية مع نوع بيانات</td><td>from django.db.models import ExpressionWrapper, F, FloatField; Product.objects.annotate(new_price=ExpressionWrapper(F('price')*1.1, output_field=FloatField()))</td></tr>
+<tr class="aggregate"><td>Concat()</td><td>EXPRESSION</td><td>دمج النصوص</td><td>from django.db.models import Value; from django.db.models.functions import Concat; User.objects.annotate(full=Concat('first_name', Value(' '), 'last_name'))</td></tr>
+
+</tbody>
+</table>
+
+<script>
+document.getElementById("search").addEventListener("keyup", function() {
+  var value = this.value.toLowerCase();
+  var rows = document.querySelectorAll("#ormTable tbody tr");
+  rows.forEach(function(row) {
+    row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+  });
+});
+</script>
+
+</body>
+</html>
